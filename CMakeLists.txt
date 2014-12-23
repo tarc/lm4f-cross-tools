@@ -29,7 +29,6 @@ ExternalProject_Add (
 	PREFIX cross-tools
 	URL http://www.mpfr.org/mpfr-current/mpfr-3.1.2.tar.bz2
 	URL_HASH MD5=ee2c3ac63bf0c2359bf08fc3ee094c19
-#	SOURCE_DIR ${CLFS_PREFIX}/src/gcc/mpfr
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
 	INSTALL_COMMAND ""
@@ -43,7 +42,6 @@ ExternalProject_Add (
 	PREFIX cross-tools
 	URL https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.bz2
 	URL_HASH MD5=b7ff2d88cae7f8085bd5006096eed470
-#	SOURCE_DIR ${CLFS_PREFIX}/src/gcc/gmp
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
 	INSTALL_COMMAND ""
@@ -57,7 +55,6 @@ ExternalProject_Add (
 	PREFIX cross-tools
 	URL ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.2.tar.gz
 	URL_HASH SHA1=5072d82ab50ec36cc8c0e320b5c377adb48abe70
-#	SOURCE_DIR ${CLFS_PREFIX}/src/gcc/mpc
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
 	INSTALL_COMMAND ""
@@ -72,9 +69,35 @@ ExternalProject_Add (
 	DEPENDS mpfr gmp mpc
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ""
+	CONFIGURE_COMMAND <SOURCE_DIR>/configure
+		--prefix=<INSTALL_DIR>
+		--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+		--target=${CLFS_TARGET}
+		--disable-nls
+		--build=${CLFS_HOST}
+		--host=${CLFS_HOST}
+		--target=${CLFS_TARGET}
+		--disable-shared
+		--without-headers
+		--with-newlib
+		--disable-decimal-float
+		--disable-libgomp
+		--disable-libmudflap
+		--disable-libssp
+		--disable-libatomic
+		--disable-libquadmath
+		--disable-threads
+		--enable-languages=c,c++
+		--disable-multilib
+		--with-mpfr-include=<SOURCE_DIR>/mpfr/src
+		--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
+		--with-arch=${CLFS_ARM_ARCH}
+		--with-float=${CLFS_FLOAT}
+		--with-fpu=${CLFS_FPU}
+	BUILD_COMMAND
+		make all-gcc all-target-libgcc
+	INSTALL_COMMAND make
+		make install-gcc install-target-libgcc
 	)
 
 ExternalProject_Get_Property(gcc source_dir) 
