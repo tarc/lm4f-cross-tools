@@ -7,6 +7,8 @@ set (CLFS_TARGET arm-none-eabi)
 set (CLFS_ARCH arm)
 set (CLFS_ARM_ARCH armv7-m)
 
+set (CLFS_PREFIX cross-tools)
+
 include (ExternalProject)
 
 ExternalProject_Add (
@@ -20,4 +22,78 @@ ExternalProject_Add (
 		--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
 		--disable-nls
 		--disable-multilib && make configure-host
+	)
+
+ExternalProject_Add (
+	mpfr
+	PREFIX cross-tools
+	URL http://www.mpfr.org/mpfr-current/mpfr-3.1.2.tar.bz2
+	URL_HASH MD5=ee2c3ac63bf0c2359bf08fc3ee094c19
+#	SOURCE_DIR ${CLFS_PREFIX}/src/gcc/mpfr
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ""
+	INSTALL_COMMAND ""
+	)
+
+ExternalProject_Get_Property(mpfr source_dir) 
+set (MPFR_SOURCE_DIR ${source_dir})
+
+ExternalProject_Add (
+	gmp
+	PREFIX cross-tools
+	URL https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.bz2
+	URL_HASH MD5=b7ff2d88cae7f8085bd5006096eed470
+#	SOURCE_DIR ${CLFS_PREFIX}/src/gcc/gmp
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ""
+	INSTALL_COMMAND ""
+	)
+
+ExternalProject_Get_Property(gmp source_dir) 
+set (GMP_SOURCE_DIR ${source_dir})
+
+ExternalProject_Add (
+	mpc
+	PREFIX cross-tools
+	URL ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.2.tar.gz
+	URL_HASH SHA1=5072d82ab50ec36cc8c0e320b5c377adb48abe70
+#	SOURCE_DIR ${CLFS_PREFIX}/src/gcc/mpc
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ""
+	INSTALL_COMMAND ""
+	)
+
+ExternalProject_Get_Property(mpc source_dir) 
+set (MPC_SOURCE_DIR ${source_dir})
+
+ExternalProject_Add (
+	gcc
+	PREFIX cross-tools
+	DEPENDS mpfr gmp mpc
+	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
+	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ""
+	INSTALL_COMMAND ""
+	)
+
+ExternalProject_Get_Property(gcc source_dir) 
+set (GCC_SOURCE_DIR ${source_dir})
+
+ExternalProject_Add_Step (
+	gcc copy_mpfr
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPFR_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpfr
+	DEPENDERS configure
+	)
+
+ExternalProject_Add_Step (
+	gcc copy_gmp
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${GMP_SOURCE_DIR} ${GCC_SOURCE_DIR}/gmp
+	DEPENDERS configure
+	)
+
+ExternalProject_Add_Step (
+	gcc copy_mpc
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPC_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpc
+	DEPENDERS configure
 	)
