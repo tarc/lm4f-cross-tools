@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8.12)
 
 set (CLFS_FLOAT softfp)
 set (CLFS_FPU fpv4-sp-d16)
@@ -66,7 +66,7 @@ set (MPC_SOURCE_DIR ${source_dir})
 ExternalProject_Add (
 	gcc
 	PREFIX cross-tools
-	DEPENDS mpfr gmp mpc
+	DEPENDS mpfr gmp mpc binutils
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
 	CONFIGURE_COMMAND <SOURCE_DIR>/configure
@@ -94,6 +94,7 @@ ExternalProject_Add (
 		--with-arch=${CLFS_ARM_ARCH}
 		--with-float=${CLFS_FLOAT}
 		--with-fpu=${CLFS_FPU}
+		--with-mode=thumb
 	BUILD_COMMAND
 		make all-gcc all-target-libgcc
 	INSTALL_COMMAND make
@@ -106,17 +107,20 @@ set (GCC_SOURCE_DIR ${source_dir})
 ExternalProject_Add_Step (
 	gcc copy_mpfr
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPFR_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpfr
+	DEPENDEES download
 	DEPENDERS configure
 	)
 
 ExternalProject_Add_Step (
 	gcc copy_gmp
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${GMP_SOURCE_DIR} ${GCC_SOURCE_DIR}/gmp
+	DEPENDEES download
 	DEPENDERS configure
 	)
 
 ExternalProject_Add_Step (
 	gcc copy_mpc
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPC_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpc
+	DEPENDEES download
 	DEPENDERS configure
 	)
