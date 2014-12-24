@@ -97,7 +97,7 @@ ExternalProject_Add (
 		--with-mode=thumb
 	BUILD_COMMAND
 		make all-gcc all-target-libgcc
-	INSTALL_COMMAND make
+	INSTALL_COMMAND
 		make install-gcc install-target-libgcc
 	)
 
