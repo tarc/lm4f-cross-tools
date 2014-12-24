@@ -69,7 +69,10 @@ ExternalProject_Add (
 	DEPENDS mpfr gmp mpc binutils
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
-	CONFIGURE_COMMAND <SOURCE_DIR>/configure
+	CONFIGURE_COMMAND
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		<SOURCE_DIR>/configure
 		--prefix=<INSTALL_DIR>
 		--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
 		--target=${CLFS_TARGET}
@@ -87,7 +90,7 @@ ExternalProject_Add (
 		--disable-libatomic
 		--disable-libquadmath
 		--disable-threads
-		--enable-languages=c,c++
+		--enable-languages=c
 		--disable-multilib
 		--with-mpfr-include=<SOURCE_DIR>/mpfr/src
 		--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
@@ -96,8 +99,12 @@ ExternalProject_Add (
 		--with-fpu=${CLFS_FPU}
 		--with-mode=thumb
 	BUILD_COMMAND
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make all-gcc all-target-libgcc
 	INSTALL_COMMAND
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make install-gcc install-target-libgcc
 	)
 
@@ -123,4 +130,42 @@ ExternalProject_Add_Step (
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPC_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpc
 	DEPENDEES download
 	DEPENDERS configure
+	)
+
+ExternalProject_Add (
+	gcc-final
+	PREFIX cross-tools
+	DEPENDS gcc
+	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
+	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
+	CONFIGURE_COMMAND
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		<SOURCE_DIR>/configure
+		--prefix=<INSTALL_DIR>
+		--build=${CLFS_HOST}
+		--target=${CLFS_TARGET}
+		--host=${CLFS_HOST}
+		--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+		--disable-nls
+		--disable-threads
+		--enable-languages=c,c++
+		--enable-c99
+		--enable-long-long
+		--disable-libmudflap
+		--disable-multilib
+		--with-mpfr-include=<SOURCE_DIR>/mpfr/src
+		--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
+		--with-arch=${CLFS_ARM_ARCH}
+		--with-float=${CLFS_FLOAT}
+		--with-fpu=${CLFS_FPU}
+		--with-mode=thumb
+	BUILD_COMMAND
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		make all-gcc all-target-libgcc
+	INSTALL_COMMAND
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		make install-gcc install-target-libgcc
 	)
