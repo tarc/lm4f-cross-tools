@@ -18,6 +18,7 @@ ExternalProject_Add (
 	URL_HASH MD5=e0f71a7b2ddab0f8612336ac81d9636b
 	CONFIGURE_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
@@ -29,11 +30,13 @@ ExternalProject_Add (
 		make configure-host
 	BUILD_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make
 	INSTALL_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make install
@@ -86,6 +89,7 @@ ExternalProject_Add (
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
 	CONFIGURE_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
@@ -116,11 +120,13 @@ ExternalProject_Add (
 		--with-mode=thumb
 	BUILD_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make all-gcc all-target-libgcc
 	INSTALL_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make install-gcc install-target-libgcc
@@ -158,6 +164,7 @@ ExternalProject_Add (
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
 	CONFIGURE_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
@@ -181,11 +188,13 @@ ExternalProject_Add (
 		--with-mode=thumb
 	BUILD_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make all-gcc all-target-libgcc
 	INSTALL_COMMAND
 		hash -r &&
+		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make install-gcc install-target-libgcc
