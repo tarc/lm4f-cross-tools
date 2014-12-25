@@ -16,12 +16,27 @@ ExternalProject_Add (
 	PREFIX cross-tools
 	URL http://ftp.gnu.org/gnu/binutils/binutils-2.24.tar.bz2
 	URL_HASH MD5=e0f71a7b2ddab0f8612336ac81d9636b
-	CONFIGURE_COMMAND <SOURCE_DIR>/configure
-		--prefix=<INSTALL_DIR>
-		--target=${CLFS_TARGET}
-		--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
-		--disable-nls
-		--disable-multilib && make configure-host
+	CONFIGURE_COMMAND
+		hash -r &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		<SOURCE_DIR>/configure
+			--prefix=<INSTALL_DIR>
+			--target=${CLFS_TARGET}
+			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+			--disable-nls
+			--disable-multilib &&
+		make configure-host
+	BUILD_COMMAND
+		hash -r &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		make
+	INSTALL_COMMAND
+		hash -r &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		make install
 	)
 
 ExternalProject_Add (
@@ -70,6 +85,7 @@ ExternalProject_Add (
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
 	CONFIGURE_COMMAND
+		hash -r &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
@@ -99,10 +115,12 @@ ExternalProject_Add (
 		--with-fpu=${CLFS_FPU}
 		--with-mode=thumb
 	BUILD_COMMAND
+		hash -r &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make all-gcc all-target-libgcc
 	INSTALL_COMMAND
+		hash -r &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make install-gcc install-target-libgcc
@@ -139,6 +157,7 @@ ExternalProject_Add (
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
 	CONFIGURE_COMMAND
+		hash -r &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
@@ -161,11 +180,37 @@ ExternalProject_Add (
 		--with-fpu=${CLFS_FPU}
 		--with-mode=thumb
 	BUILD_COMMAND
+		hash -r &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make all-gcc all-target-libgcc
 	INSTALL_COMMAND
+		hash -r &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		make install-gcc install-target-libgcc
+	)
+
+ExternalProject_Get_Property(gcc-final source_dir) 
+set (GCC_SOURCE_DIR ${source_dir})
+
+ExternalProject_Add_Step (
+	gcc-final copy_mpfr
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPFR_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpfr
+	DEPENDEES download
+	DEPENDERS configure
+	)
+
+ExternalProject_Add_Step (
+	gcc-final copy_gmp
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${GMP_SOURCE_DIR} ${GCC_SOURCE_DIR}/gmp
+	DEPENDEES download
+	DEPENDERS configure
+	)
+
+ExternalProject_Add_Step (
+	gcc-final copy_mpc
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPC_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpc
+	DEPENDEES download
+	DEPENDERS configure
 	)
