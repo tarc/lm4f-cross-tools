@@ -93,31 +93,31 @@ ExternalProject_Add (
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
-		--prefix=<INSTALL_DIR>
-		--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
-		--target=${CLFS_TARGET}
-		--disable-nls
-		--build=${CLFS_HOST}
-		--host=${CLFS_HOST}
-		--target=${CLFS_TARGET}
-		--disable-shared
-		--without-headers
-		--with-newlib
-		--disable-decimal-float
-		--disable-libgomp
-		--disable-libmudflap
-		--disable-libssp
-		--disable-libatomic
-		--disable-libquadmath
-		--disable-threads
-		--enable-languages=c
-		--disable-multilib
-		--with-mpfr-include=<SOURCE_DIR>/mpfr/src
-		--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
-		--with-arch=${CLFS_ARM_ARCH}
-		--with-float=${CLFS_FLOAT}
-		--with-fpu=${CLFS_FPU}
-		--with-mode=thumb
+			--prefix=<INSTALL_DIR>
+			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+			--target=${CLFS_TARGET}
+			--disable-nls
+			--build=${CLFS_HOST}
+			--host=${CLFS_HOST}
+			--target=${CLFS_TARGET}
+			--disable-shared
+			--without-headers
+			--with-newlib
+			--disable-decimal-float
+			--disable-libgomp
+			--disable-libmudflap
+			--disable-libssp
+			--disable-libatomic
+			--disable-libquadmath
+			--disable-threads
+			--enable-languages=c
+			--disable-multilib
+			--with-mpfr-include=<SOURCE_DIR>/mpfr/src
+			--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
+			--with-arch=${CLFS_ARM_ARCH}
+			--with-float=${CLFS_FLOAT}
+			--with-fpu=${CLFS_FPU}
+			--with-mode=thumb
 	BUILD_COMMAND
 		hash -r &&
 		unset CFLAGS &&
@@ -168,24 +168,24 @@ ExternalProject_Add (
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
-		--prefix=<INSTALL_DIR>
-		--build=${CLFS_HOST}
-		--target=${CLFS_TARGET}
-		--host=${CLFS_HOST}
-		--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
-		--disable-nls
-		--disable-threads
-		--enable-languages=c,c++
-		--enable-c99
-		--enable-long-long
-		--disable-libmudflap
-		--disable-multilib
-		--with-mpfr-include=<SOURCE_DIR>/mpfr/src
-		--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
-		--with-arch=${CLFS_ARM_ARCH}
-		--with-float=${CLFS_FLOAT}
-		--with-fpu=${CLFS_FPU}
-		--with-mode=thumb
+			--prefix=<INSTALL_DIR>
+			--build=${CLFS_HOST}
+			--target=${CLFS_TARGET}
+			--host=${CLFS_HOST}
+			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+			--disable-nls
+			--disable-threads
+			--enable-languages=c,c++
+			--enable-c99
+			--enable-long-long
+			--disable-libmudflap
+			--disable-multilib
+			--with-mpfr-include=<SOURCE_DIR>/mpfr/src
+			--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
+			--with-arch=${CLFS_ARM_ARCH}
+			--with-float=${CLFS_FLOAT}
+			--with-fpu=${CLFS_FPU}
+			--with-mode=thumb
 	BUILD_COMMAND
 		hash -r &&
 		unset CFLAGS &&
