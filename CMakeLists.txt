@@ -1,11 +1,12 @@
 cmake_minimum_required (VERSION 2.8.12)
 
-set (CLFS_FLOAT softfp)
+set (CLFS_FLOAT hard)
 set (CLFS_FPU fpv4-sp-d16)
 set (CLFS_HOST x86_64-cross-linux-gnu)
 set (CLFS_TARGET arm-none-eabi)
 set (CLFS_ARCH arm)
 set (CLFS_ARM_ARCH armv7-m)
+set (CLFS_ARM_CPU cortex-m4)
 
 set (CLFS_PREFIX cross-tools)
 
@@ -26,14 +27,14 @@ ExternalProject_Add (
 			--target=${CLFS_TARGET}
 			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
 			--disable-nls
-			--disable-multilib &&
+			--enable-multilib &&
 		make configure-host
 	BUILD_COMMAND
 		hash -r &&
 		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
-		make
+		make all
 	INSTALL_COMMAND
 		hash -r &&
 		unset CFLAGS &&
@@ -84,7 +85,7 @@ set (MPC_SOURCE_DIR ${source_dir})
 ExternalProject_Add (
 	gcc
 	PREFIX cross-tools
-	DEPENDS mpfr gmp mpc binutils
+	DEPENDS binutils mpfr gmp mpc
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
 	CONFIGURE_COMMAND
@@ -95,11 +96,10 @@ ExternalProject_Add (
 		<SOURCE_DIR>/configure
 			--prefix=<INSTALL_DIR>
 			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
-			--target=${CLFS_TARGET}
-			--disable-nls
 			--build=${CLFS_HOST}
 			--host=${CLFS_HOST}
 			--target=${CLFS_TARGET}
+			--disable-nls
 			--disable-shared
 			--without-headers
 			--with-newlib
@@ -115,21 +115,23 @@ ExternalProject_Add (
 			--with-mpfr-include=<SOURCE_DIR>/mpfr/src
 			--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
 			--with-arch=${CLFS_ARM_ARCH}
+			--with-cpu=${CLFS_ARM_CPU}
 			--with-float=${CLFS_FLOAT}
 			--with-fpu=${CLFS_FPU}
 			--with-mode=thumb
+			--with-no-thumb-interwork
 	BUILD_COMMAND
 		hash -r &&
 		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
-		make all-gcc all-target-libgcc
+		make all-gcc
 	INSTALL_COMMAND
 		hash -r &&
 		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
-		make install-gcc install-target-libgcc
+		make install-gcc
 	)
 
 ExternalProject_Get_Property(gcc source_dir) 
@@ -157,9 +159,44 @@ ExternalProject_Add_Step (
 	)
 
 ExternalProject_Add (
-	gcc-final
+	newlib
 	PREFIX cross-tools
 	DEPENDS gcc
+	URL ftp://sourceware.org/pub/newlib/newlib-2.2.0.tar.gz
+	URL_HASH MD5=f2294ded26e910a73637ecdfbdd1ef05
+	CONFIGURE_COMMAND
+		hash -r &&
+		unset CFLAGS &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		<SOURCE_DIR>/configure
+			--prefix=<INSTALL_DIR>
+			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+			--build=${CLFS_HOST}
+			--host=${CLFS_HOST}
+			--target=${CLFS_TARGET}
+			--enable-multilib
+	BUILD_COMMAND
+		hash -r &&
+		unset CFLAGS &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		make all
+	INSTALL_COMMAND
+		hash -r &&
+		unset CFLAGS &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		make install
+	)
+
+ExternalProject_Get_Property(newlib source_dir) 
+set (NEWLIB_SOURCE_DIR ${source_dir})
+
+ExternalProject_Add (
+	gcc-final
+	PREFIX cross-tools
+	DEPENDS newlib gcc
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
 	CONFIGURE_COMMAND
@@ -169,57 +206,58 @@ ExternalProject_Add (
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
 			--prefix=<INSTALL_DIR>
-			--build=${CLFS_HOST}
-			--target=${CLFS_TARGET}
-			--host=${CLFS_HOST}
 			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+			--build=${CLFS_HOST}
+			--host=${CLFS_HOST}
+			--target=${CLFS_TARGET}
 			--disable-nls
+			--disable-shared
+			--with-newlib
 			--disable-threads
 			--enable-languages=c,c++
-			--enable-c99
-			--enable-long-long
-			--disable-libmudflap
 			--disable-multilib
 			--with-mpfr-include=<SOURCE_DIR>/mpfr/src
 			--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
 			--with-arch=${CLFS_ARM_ARCH}
+			--with-cpu=${CLFS_ARM_CPU}
 			--with-float=${CLFS_FLOAT}
 			--with-fpu=${CLFS_FPU}
 			--with-mode=thumb
+			--with-no-thumb-interwork
 	BUILD_COMMAND
 		hash -r &&
 		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
-		make all-gcc all-target-libgcc
+		make all
 	INSTALL_COMMAND
 		hash -r &&
 		unset CFLAGS &&
 		LC_ALL=POSIX
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
-		make install-gcc install-target-libgcc
+		make install
 	)
 
 ExternalProject_Get_Property(gcc-final source_dir) 
-set (GCC_SOURCE_DIR ${source_dir})
+set (GCC_FINAL_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add_Step (
 	gcc-final copy_mpfr
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPFR_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpfr
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPFR_SOURCE_DIR} ${GCC_FINAL_SOURCE_DIR}/mpfr
 	DEPENDEES download
 	DEPENDERS configure
 	)
 
 ExternalProject_Add_Step (
 	gcc-final copy_gmp
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${GMP_SOURCE_DIR} ${GCC_SOURCE_DIR}/gmp
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${GMP_SOURCE_DIR} ${GCC_FINAL_SOURCE_DIR}/gmp
 	DEPENDEES download
 	DEPENDERS configure
 	)
 
 ExternalProject_Add_Step (
 	gcc-final copy_mpc
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPC_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpc
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPC_SOURCE_DIR} ${GCC_FINAL_SOURCE_DIR}/mpc
 	DEPENDEES download
 	DEPENDERS configure
 	)
