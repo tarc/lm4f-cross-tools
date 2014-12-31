@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.12)
+cmake_minimum_required (VERSION 3.1)
 
 set (CLFS_FLOAT hard)
 set (CLFS_FPU fpv4-sp-d16)
@@ -11,6 +11,18 @@ set (CLFS_ARM_CPU cortex-m4)
 set (CLFS_PREFIX cross-tools)
 
 include (ExternalProject)
+
+ExternalProject_Add (
+	lm4tools
+	PREFIX lm4tools
+	GIT_REPOSITORY https://github.com/utzig/lm4tools
+	CONFIGURE_COMMAND ""
+	BUILD_IN_SOURCE 1
+	BUILD_COMMAND
+		make -C lm4flash
+	INSTALL_COMMAND
+		COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/lm4flash/lm4flash <INSTALL_DIR>
+	)
 
 ExternalProject_Add (
 	binutils
