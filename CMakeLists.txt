@@ -83,7 +83,7 @@ ExternalProject_Get_Property(mpc source_dir)
 set (MPC_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add (
-	gcc
+	gcc-minimal
 	PREFIX cross-tools
 	DEPENDS binutils mpfr gmp mpc
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
@@ -112,8 +112,6 @@ ExternalProject_Add (
 			--disable-threads
 			--enable-languages=c
 			--disable-multilib
-			--with-mpfr-include=<SOURCE_DIR>/mpfr/src
-			--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
 			--with-arch=${CLFS_ARM_ARCH}
 			--with-cpu=${CLFS_ARM_CPU}
 			--with-float=${CLFS_FLOAT}
@@ -134,25 +132,25 @@ ExternalProject_Add (
 		make install-gcc
 	)
 
-ExternalProject_Get_Property(gcc source_dir) 
+ExternalProject_Get_Property(gcc-minimal source_dir) 
 set (GCC_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add_Step (
-	gcc copy_mpfr
+	gcc-minimal copy_mpfr
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPFR_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpfr
 	DEPENDEES download
 	DEPENDERS configure
 	)
 
 ExternalProject_Add_Step (
-	gcc copy_gmp
+	gcc-minimal copy_gmp
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${GMP_SOURCE_DIR} ${GCC_SOURCE_DIR}/gmp
 	DEPENDEES download
 	DEPENDERS configure
 	)
 
 ExternalProject_Add_Step (
-	gcc copy_mpc
+	gcc-minimal copy_mpc
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPC_SOURCE_DIR} ${GCC_SOURCE_DIR}/mpc
 	DEPENDEES download
 	DEPENDERS configure
@@ -161,7 +159,7 @@ ExternalProject_Add_Step (
 ExternalProject_Add (
 	newlib
 	PREFIX cross-tools
-	DEPENDS gcc
+	DEPENDS gcc-minimal
 	URL ftp://sourceware.org/pub/newlib/newlib-2.2.0.tar.gz
 	URL_HASH MD5=f2294ded26e910a73637ecdfbdd1ef05
 	CONFIGURE_COMMAND
@@ -194,9 +192,9 @@ ExternalProject_Get_Property(newlib source_dir)
 set (NEWLIB_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add (
-	gcc-final
+	gcc
 	PREFIX cross-tools
-	DEPENDS newlib gcc
+	DEPENDS newlib gcc-minimal
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
 	CONFIGURE_COMMAND
@@ -215,9 +213,6 @@ ExternalProject_Add (
 			--with-newlib
 			--disable-threads
 			--enable-languages=c,c++
-			--disable-multilib
-			--with-mpfr-include=<SOURCE_DIR>/mpfr/src
-			--with-mpfr-lib=<BINARY_DIR>/mpfr/src/.libs
 			--with-arch=${CLFS_ARM_ARCH}
 			--with-cpu=${CLFS_ARM_CPU}
 			--with-float=${CLFS_FLOAT}
@@ -238,25 +233,25 @@ ExternalProject_Add (
 		make install
 	)
 
-ExternalProject_Get_Property(gcc-final source_dir) 
+ExternalProject_Get_Property(gcc source_dir) 
 set (GCC_FINAL_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add_Step (
-	gcc-final copy_mpfr
+	gcc copy_mpfr
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPFR_SOURCE_DIR} ${GCC_FINAL_SOURCE_DIR}/mpfr
 	DEPENDEES download
 	DEPENDERS configure
 	)
 
 ExternalProject_Add_Step (
-	gcc-final copy_gmp
+	gcc copy_gmp
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${GMP_SOURCE_DIR} ${GCC_FINAL_SOURCE_DIR}/gmp
 	DEPENDEES download
 	DEPENDERS configure
 	)
 
 ExternalProject_Add_Step (
-	gcc-final copy_mpc
+	gcc copy_mpc
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${MPC_SOURCE_DIR} ${GCC_FINAL_SOURCE_DIR}/mpc
 	DEPENDEES download
 	DEPENDERS configure
@@ -265,7 +260,7 @@ ExternalProject_Add_Step (
 ExternalProject_Add (
 	gdb	
 	PREFIX cross-tools
-	DEPENDS gcc-final
+	DEPENDS gcc
 	URL ftp://ftp.gnu.org/gnu/gdb/gdb-7.8.tar.gz
 	URL_HASH MD5=38d816d641093db2e13ba284e26090b4
 	CONFIGURE_COMMAND
