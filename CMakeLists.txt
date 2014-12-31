@@ -261,3 +261,34 @@ ExternalProject_Add_Step (
 	DEPENDEES download
 	DEPENDERS configure
 	)
+
+ExternalProject_Add (
+	gdb	
+	PREFIX cross-tools
+	DEPENDS gcc-final
+	URL ftp://ftp.gnu.org/gnu/gdb/gdb-7.8.tar.gz
+	URL_HASH MD5=38d816d641093db2e13ba284e26090b4
+	CONFIGURE_COMMAND
+		hash -r &&
+		unset CFLAGS &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		<SOURCE_DIR>/configure
+			--prefix=<INSTALL_DIR>
+			--target=${CLFS_TARGET}
+			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+			--enable-multilib
+	BUILD_COMMAND
+		hash -r &&
+		unset CFLAGS &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		make all
+	INSTALL_COMMAND
+		hash -r &&
+		unset CFLAGS &&
+		LC_ALL=POSIX
+		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
+		make install
+	)
+
