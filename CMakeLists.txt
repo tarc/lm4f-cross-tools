@@ -1,14 +1,22 @@
 cmake_minimum_required (VERSION 3.1)
 
-set (CLFS_FLOAT hard)
-set (CLFS_FPU fpv4-sp-d16)
-set (CLFS_HOST x86_64-cross-linux-gnu)
-set (CLFS_TARGET arm-none-eabi)
-set (CLFS_ARCH arm)
-set (CLFS_ARM_ARCH armv7-m)
-set (CLFS_ARM_CPU cortex-m4)
+project (lm4fCrossTools)
 
-set (CLFS_PREFIX cross-tools)
+option (BUILD_STELLARIS_WARE
+	"Search and build Texas' Stellaris Ware" ON)
+
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+	"${CMAKE_SOURCE_DIR}/cmake_modules/")
+
+set (LM_FLOAT hard)
+set (LM_FPU fpv4-sp-d16)
+set (LM_HOST x86_64-cross-linux-gnu)
+set (LM_TARGET arm-none-eabi)
+set (LM_ARCH arm)
+set (LM_ARM_ARCH armv7-m)
+set (LM_ARM_CPU cortex-m4)
+
+set (LM_PREFIX cross-tools)
 
 include (ExternalProject)
 
@@ -24,6 +32,9 @@ ExternalProject_Add (
 		COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/lm4flash/lm4flash <INSTALL_DIR>
 	)
 
+ExternalProject_Get_Property(lm4tools install_dir) 
+set (LM4TOOLS_INSTALL_DIR ${install_dir})
+
 ExternalProject_Add (
 	binutils
 	PREFIX cross-tools
@@ -36,8 +47,8 @@ ExternalProject_Add (
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
 			--prefix=<INSTALL_DIR>
-			--target=${CLFS_TARGET}
-			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+			--target=${LM_TARGET}
+			--with-sysroot=<INSTALL_DIR>/${LM_TARGET}
 			--disable-nls
 			--enable-multilib &&
 		make configure-host
@@ -107,10 +118,10 @@ ExternalProject_Add (
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
 			--prefix=<INSTALL_DIR>
-			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
-			--build=${CLFS_HOST}
-			--host=${CLFS_HOST}
-			--target=${CLFS_TARGET}
+			--with-sysroot=<INSTALL_DIR>/${LM_TARGET}
+			--build=${LM_HOST}
+			--host=${LM_HOST}
+			--target=${LM_TARGET}
 			--disable-nls
 			--disable-shared
 			--without-headers
@@ -124,10 +135,10 @@ ExternalProject_Add (
 			--disable-threads
 			--enable-languages=c
 			--disable-multilib
-			--with-arch=${CLFS_ARM_ARCH}
-			--with-cpu=${CLFS_ARM_CPU}
-			--with-float=${CLFS_FLOAT}
-			--with-fpu=${CLFS_FPU}
+			--with-arch=${LM_ARM_ARCH}
+			--with-cpu=${LM_ARM_CPU}
+			--with-float=${LM_FLOAT}
+			--with-fpu=${LM_FPU}
 			--with-mode=thumb
 			--with-no-thumb-interwork
 	BUILD_COMMAND
@@ -181,10 +192,10 @@ ExternalProject_Add (
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
 			--prefix=<INSTALL_DIR>
-			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
-			--build=${CLFS_HOST}
-			--host=${CLFS_HOST}
-			--target=${CLFS_TARGET}
+			--with-sysroot=<INSTALL_DIR>/${LM_TARGET}
+			--build=${LM_HOST}
+			--host=${LM_HOST}
+			--target=${LM_TARGET}
 			--enable-multilib
 	BUILD_COMMAND
 		hash -r &&
@@ -216,19 +227,19 @@ ExternalProject_Add (
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
 			--prefix=<INSTALL_DIR>
-			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
-			--build=${CLFS_HOST}
-			--host=${CLFS_HOST}
-			--target=${CLFS_TARGET}
+			--with-sysroot=<INSTALL_DIR>/${LM_TARGET}
+			--build=${LM_HOST}
+			--host=${LM_HOST}
+			--target=${LM_TARGET}
 			--disable-nls
 			--disable-shared
 			--with-newlib
 			--disable-threads
 			--enable-languages=c,c++
-			--with-arch=${CLFS_ARM_ARCH}
-			--with-cpu=${CLFS_ARM_CPU}
-			--with-float=${CLFS_FLOAT}
-			--with-fpu=${CLFS_FPU}
+			--with-arch=${LM_ARM_ARCH}
+			--with-cpu=${LM_ARM_CPU}
+			--with-float=${LM_FLOAT}
+			--with-fpu=${LM_FPU}
 			--with-mode=thumb
 			--with-no-thumb-interwork
 	BUILD_COMMAND
@@ -247,6 +258,8 @@ ExternalProject_Add (
 
 ExternalProject_Get_Property(gcc source_dir) 
 set (GCC_FINAL_SOURCE_DIR ${source_dir})
+ExternalProject_Get_Property(gcc install_dir) 
+set (GCC_FINAL_INSTALL_DIR ${install_dir})
 
 ExternalProject_Add_Step (
 	gcc copy_mpfr
@@ -282,8 +295,8 @@ ExternalProject_Add (
 		PATH=<INSTALL_DIR>/bin:/bin:/usr/bin
 		<SOURCE_DIR>/configure
 			--prefix=<INSTALL_DIR>
-			--target=${CLFS_TARGET}
-			--with-sysroot=<INSTALL_DIR>/${CLFS_TARGET}
+			--target=${LM_TARGET}
+			--with-sysroot=<INSTALL_DIR>/${LM_TARGET}
 			--enable-multilib
 	BUILD_COMMAND
 		hash -r &&
@@ -299,3 +312,11 @@ ExternalProject_Add (
 		make install
 	)
 
+if (BUILD_STELLARIS_WARE)
+	find_package(StellarisWare REQUIRED)
+endif ()
+
+configure_file (
+	lm4fCrossToolsConfig.cmake.in
+	lm4fCrossToolsConfig.cmake
+	)
