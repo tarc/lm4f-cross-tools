@@ -314,6 +314,28 @@ ExternalProject_Add (
 
 if (BUILD_STELLARIS_WARE)
 	find_package(StellarisWare REQUIRED)
+
+	file (GLOB MAKEDEFS_PATCH_FILE ${CMAKE_CURRENT_SOURCE_DIR}/makedefs.patch)
+
+	ExternalProject_Add (
+		stellarisware	
+		PREFIX stellarisware
+		DEPENDS gcc
+		URL ${StellarisWare_PATH}
+		PATCH_COMMAND
+			patch < ${MAKEDEFS_PATCH_FILE}
+		CONFIGURE_COMMAND
+			make clean
+		BUILD_IN_SOURCE 1
+		BUILD_COMMAND ""
+			hash -r &&
+			unset CFLAGS &&
+			LC_ALL=POSIX
+			PATH=${GCC_FINAL_INSTALL_DIR}/bin:/bin:/usr/bin
+			make
+		INSTALL_COMMAND ""
+		)
+
 endif ()
 
 configure_file (

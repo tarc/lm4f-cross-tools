@@ -1,0 +1,11 @@
+--- makedefs	2012-09-06 08:40:38.000000000 -0300
++++ makedefs.new	2015-01-02 13:34:43.485829179 -0200
+@@ -94,7 +94,7 @@
+ else
+ ifeq (${VARIANT}, cm4f)
+ CPU=-mcpu=cortex-m4
+-FPU=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
++FPU=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
+ else
+ $(error Unknown processor variant ${VARIANT}!)
+ endif
