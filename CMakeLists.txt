@@ -13,8 +13,9 @@ set (LM_INSTALL_DIR lm-cross-tools)
 set (LM_FLOAT hard)
 set (LM_FPU fpv4-sp-d16)
 set (LM_HOST x86_64-cross-linux-gnu)
-set (LM_TARGET arm-none-eabi)
+set (LM_SYSTEM_NAME none)
 set (LM_ARCH arm)
+set (LM_TARGET ${LM_ARCH}-${LM_SYSTEM_NAME}-eabi)
 set (LM_ARM_ARCH armv7-m)
 set (LM_ARM_CPU cortex-m4)
 
@@ -353,10 +354,10 @@ install (DIRECTORY ${CROSS_TOOLS_INSTALL_DIRS}
 	USE_SOURCE_PERMISSIONS)
 
 configure_file (
-	${CMAKE_PROJECT_NAME}Config.cmake.in
-	${CMAKE_PROJECT_NAME}Config.cmake
+	toolchain.cmake.in
+	toolchain-${LM_TARGET}.cmake
 	)
 
-install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
+install (FILES ${CMAKE_CURRENT_BINARY_DIR}/toolchain-${LM_TARGET}.cmake
 	DESTINATION ${LM_INSTALL_DIR})
 
