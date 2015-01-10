@@ -1,12 +1,14 @@
 cmake_minimum_required (VERSION 3.1)
 
-project (lm4fCrossTools)
+project (lmCrossTools)
 
 option (BUILD_STELLARIS_WARE
 	"Search and build Texas' Stellaris Ware" ON)
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 	"${CMAKE_SOURCE_DIR}/cmake_modules/")
+
+set (LM_INSTALL_DIR lm-cross-tools)
 
 set (LM_FLOAT hard)
 set (LM_FPU fpv4-sp-d16)
@@ -16,7 +18,7 @@ set (LM_ARCH arm)
 set (LM_ARM_ARCH armv7-m)
 set (LM_ARM_CPU cortex-m4)
 
-set (LM_PREFIX cross-tools)
+set (LM_PREFIX toolchain)
 
 include (ExternalProject)
 
@@ -37,7 +39,7 @@ set (LM4TOOLS_INSTALL_DIR ${install_dir})
 
 ExternalProject_Add (
 	binutils
-	PREFIX cross-tools
+	PREFIX ${LM_PREFIX}
 	URL http://ftp.gnu.org/gnu/binutils/binutils-2.24.tar.bz2
 	URL_HASH MD5=e0f71a7b2ddab0f8612336ac81d9636b
 	CONFIGURE_COMMAND
@@ -68,7 +70,7 @@ ExternalProject_Add (
 
 ExternalProject_Add (
 	mpfr
-	PREFIX cross-tools
+	PREFIX ${LM_PREFIX}
 	URL http://www.mpfr.org/mpfr-current/mpfr-3.1.2.tar.bz2
 	URL_HASH MD5=ee2c3ac63bf0c2359bf08fc3ee094c19
 	CONFIGURE_COMMAND ""
@@ -81,7 +83,7 @@ set (MPFR_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add (
 	gmp
-	PREFIX cross-tools
+	PREFIX ${LM_PREFIX}
 	URL https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.bz2
 	URL_HASH MD5=b7ff2d88cae7f8085bd5006096eed470
 	CONFIGURE_COMMAND ""
@@ -94,7 +96,7 @@ set (GMP_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add (
 	mpc
-	PREFIX cross-tools
+	PREFIX ${LM_PREFIX}
 	URL ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.2.tar.gz
 	URL_HASH SHA1=5072d82ab50ec36cc8c0e320b5c377adb48abe70
 	CONFIGURE_COMMAND ""
@@ -107,7 +109,7 @@ set (MPC_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add (
 	gcc-minimal
-	PREFIX cross-tools
+	PREFIX ${LM_PREFIX}
 	DEPENDS binutils mpfr gmp mpc
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
@@ -181,7 +183,7 @@ ExternalProject_Add_Step (
 
 ExternalProject_Add (
 	newlib
-	PREFIX cross-tools
+	PREFIX ${LM_PREFIX}
 	DEPENDS gcc-minimal
 	URL ftp://sourceware.org/pub/newlib/newlib-2.2.0.tar.gz
 	URL_HASH MD5=f2294ded26e910a73637ecdfbdd1ef05
@@ -216,7 +218,7 @@ set (NEWLIB_SOURCE_DIR ${source_dir})
 
 ExternalProject_Add (
 	gcc
-	PREFIX cross-tools
+	PREFIX ${LM_PREFIX}
 	DEPENDS newlib gcc-minimal
 	URL ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.bz2
 	URL_HASH MD5=4df8ee253b7f3863ad0b86359cd39c43
@@ -284,7 +286,7 @@ ExternalProject_Add_Step (
 
 ExternalProject_Add (
 	gdb	
-	PREFIX cross-tools
+	PREFIX ${LM_PREFIX}
 	DEPENDS gcc
 	URL ftp://ftp.gnu.org/gnu/gdb/gdb-7.8.tar.gz
 	URL_HASH MD5=38d816d641093db2e13ba284e26090b4
@@ -338,7 +340,23 @@ if (BUILD_STELLARIS_WARE)
 
 endif ()
 
+list (APPEND CROSS_TOOLS_INSTALL_DIRS
+	${CMAKE_CURRENT_BINARY_DIR}/${LM_PREFIX}/${LM_TARGET}
+	${CMAKE_CURRENT_BINARY_DIR}/${LM_PREFIX}/bin
+	${CMAKE_CURRENT_BINARY_DIR}/${LM_PREFIX}/include
+	${CMAKE_CURRENT_BINARY_DIR}/${LM_PREFIX}/lib
+	${CMAKE_CURRENT_BINARY_DIR}/${LM_PREFIX}/libexec
+	${CMAKE_CURRENT_BINARY_DIR}/${LM_PREFIX}/share)
+
+install (DIRECTORY ${CROSS_TOOLS_INSTALL_DIRS}
+	DESTINATION ${LM_INSTALL_DIR}/${LM_TARGET}
+	USE_SOURCE_PERMISSIONS)
+
 configure_file (
-	lm4fCrossToolsConfig.cmake.in
-	lm4fCrossToolsConfig.cmake
+	${CMAKE_PROJECT_NAME}Config.cmake.in
+	${CMAKE_PROJECT_NAME}Config.cmake
 	)
+
+install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
+	DESTINATION ${LM_INSTALL_DIR})
+
