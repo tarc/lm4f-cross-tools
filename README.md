@@ -1,1 +1,13 @@
-Experimenting with cmake's ExternalProject to build an ARM toolchain.
+This project aims to experiment with cmake's `ExternalProject` to build an ARM toolchain.
+
+To compile and install, unpack Stellaris Ware in your homedir and issue the following:
+
+    git clone https://github.com/utzig/lm4tools
+    cd lm4ftools
+    mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX=$HOME ..
+    make
+    make install
+
+If everything went OK, there should be a new directory `$HOME/lm-cross-tools` with a bare-bone toolchain for the Stellaris LM4F120 LaunchPad Evaluation Kit.
