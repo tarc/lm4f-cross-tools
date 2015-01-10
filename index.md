@@ -1,3 +1,6 @@
+---
+layout: index
+---
 This project aims to experiment with cmake's `ExternalProject` to build an ARM toolchain.
 
 To compile and install, unpack Stellaris Ware in your homedir and issue the following:
