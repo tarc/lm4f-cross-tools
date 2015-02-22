@@ -9,7 +9,7 @@ This project aims to experiment with cmake's `ExternalProject` to build an ARM t
 To compile and install issue the following:
 
     git clone https://github.com/tarc/lm4f-cross-tools.git
-    cd lm4ftools
+    cd lm4f-cross-tools
     mkdir build
     cd build
     cmake -DCMAKE_INSTALL_PREFIX=$HOME ..
