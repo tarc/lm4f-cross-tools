@@ -24,3 +24,4 @@ In order to build Stellaris Ware to test the newly generated toolchain, unpack i
 
     cmake -DBUILD_STELLARIS_WARE=ON ..
     make
+
