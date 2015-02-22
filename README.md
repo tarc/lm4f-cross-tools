@@ -2,7 +2,7 @@ This project aims to experiment with cmake's `ExternalProject` to build an ARM t
 
 ### Prerequisites
 
-    sudo apt-get install git cmake build-essential texinfo libreadline-dev
+    sudo apt-get install git cmake build-essential texinfo libreadline-dev libusb-1.0-0-dev
 
 ### Compilation
 
