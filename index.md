@@ -32,4 +32,4 @@ In order to build Stellaris Ware to test the newly generated toolchain, unpack i
 
 ### Fancy Web-Page
 
-[lm4f-cross-tools](https://tarc.github.io/lm4f-cross-tools "ml4f-cross-tools page")G
+[lm4f-cross-tools](https://tarc.github.io/lm4f-cross-tools "ml4f-cross-tools page")
