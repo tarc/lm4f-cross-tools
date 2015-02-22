@@ -1,9 +1,9 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 2.8)
 
 project (lmCrossTools)
 
 option (BUILD_STELLARIS_WARE
-	"Search and build Texas' Stellaris Ware" ON)
+	"Search and build Texas' Stellaris Ware" OFF)
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 	"${CMAKE_SOURCE_DIR}/cmake_modules/")
