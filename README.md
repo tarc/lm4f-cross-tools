@@ -1,8 +1,10 @@
 This project aims to experiment with cmake's `ExternalProject` to build an ARM toolchain.
 
-Prerrequisites:
+### Prerequisites
 
     sudo apt-get install git cmake build-essential texinfo
+
+### Compilation
 
 To compile and install issue the following:
 
@@ -13,6 +15,8 @@ To compile and install issue the following:
     cmake -DCMAKE_INSTALL_PREFIX=$HOME ..
     make
     make install
+
+### Build Stellaris Ware
 
 To build Stellaris Ware to test the newly generated toolchain, unpack it in your homedir, reconfigure from the build dir and make it again:
 
