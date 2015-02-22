@@ -16,11 +16,11 @@ To compile and install issue the following:
     make
     make install
 
+If everything went OK, there should be a new directory `$HOME/lm-cross-tools` with a bare-bone toolchain for the Stellaris LM4F120 LaunchPad Evaluation Kit.
+
 ### Build Stellaris Ware
 
-To build Stellaris Ware to test the newly generated toolchain, unpack it in your homedir, reconfigure from the build dir and make it again:
+In order to build Stellaris Ware to test the newly generated toolchain, unpack it in your homedir, reconfigure from the build dir and make it again:
 
     cmake -DBUILD_STELLARIS_WARE=ON ..
     make
-
-If everything went OK, there should be a new directory `$HOME/lm-cross-tools` with a bare-bone toolchain for the Stellaris LM4F120 LaunchPad Evaluation Kit.
