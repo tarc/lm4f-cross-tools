@@ -1,8 +1,3 @@
----
-layout: index
----
-
-
 This project aims to experiment with cmake's `ExternalProject` to build an ARM toolchain.
 
 ### Prerequisites
