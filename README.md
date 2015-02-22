@@ -2,7 +2,7 @@ This project aims to experiment with cmake's `ExternalProject` to build an ARM t
 
 Prerrequisites:
 
-    sudo apt-get install git cmake build-essential
+    sudo apt-get install git cmake build-essential texinfo
 
 To compile and install, unpack Stellaris Ware in your homedir and issue the following:
 
